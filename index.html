@@ -5,100 +5,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI 赛事掘金</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    :root {
-      --bg: #fafafa; --card-bg: #fff; --text: #1d1d1f;
-      --text-secondary: #86868b; --accent: #0071e3;
-      --border: #e5e5e7; --red: #ff3b30; --orange: #ff9500;
-      --green: #34c759; --radius: 16px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.06);
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-      background: var(--bg); color: var(--text); line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    .hero { text-align: center; padding: 80px 24px 40px; }
-    .hero h1 { font-size: clamp(36px, 6vw, 56px); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
-    .subtitle { font-size: 18px; color: var(--text-secondary); font-weight: 400; }
-    .update-date { font-size: 13px; color: var(--text-secondary); margin-top: 8px; opacity: 0.7; }
-    .filters { display: flex; justify-content: center; gap: 8px; padding: 0 24px 40px; flex-wrap: wrap; }
-    .filter-btn {
-      padding: 8px 20px; border: 1px solid var(--border); border-radius: 980px;
-      background: var(--card-bg); font-size: 14px; color: var(--text); cursor: pointer;
-      transition: all 0.2s; font-family: inherit;
-    }
-    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
-    .grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px; max-width: 1200px; margin: 0 auto; padding: 0 24px 80px;
-    }
-    .card {
-      background: var(--card-bg); border-radius: var(--radius); overflow: hidden;
-      box-shadow: var(--shadow); cursor: pointer; transition: transform 0.25s, box-shadow 0.25s;
-    }
-    .card:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
-    .card-poster { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .card-body { padding: 20px; }
-    .card-tags { display: flex; gap: 6px; margin-bottom: 10px; }
-    .card-tag { font-size: 11px; padding: 3px 10px; border-radius: 980px; background: #f0f0f0; color: var(--text-secondary); font-weight: 500; }
-    .card-tag.hot { background: #fff0f0; color: var(--red); }
-    .card-name { font-size: 18px; font-weight: 600; margin-bottom: 12px; line-height: 1.3; }
-    .card-meta { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text-secondary); }
-    .card-meta span { display: flex; align-items: center; gap: 6px; }
-    .card-prize { color: var(--text); font-weight: 600; font-size: 16px; }
-    .card-deadline.soon { color: var(--red); font-weight: 600; }
-    .card-deadline.normal { color: var(--orange); }
-    .card-deadline.safe { color: var(--green); }
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px); z-index: 100; justify-content: center; align-items: center; padding: 24px;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: var(--card-bg); border-radius: 20px; max-width: 560px; width: 100%;
-      max-height: 90vh; overflow-y: auto; position: relative;
-    }
-    .modal-close {
-      position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
-      border: none; background: rgba(0,0,0,0.06); border-radius: 50%;
-      font-size: 20px; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; color: var(--text-secondary); z-index: 10;
-    }
-    .modal-poster { width: 100%; aspect-ratio: 16/9; object-fit: cover; border-radius: 20px 20px 0 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-    .modal-title { font-size: 24px; font-weight: 700; padding: 24px 24px 8px; }
-    .modal-desc { padding: 0 24px 20px; color: var(--text-secondary); font-size: 15px; line-height: 1.6; }
-    .modal-info { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 0 24px 24px; }
-    .modal-info-item { display: flex; flex-direction: column; gap: 2px; }
-    .modal-info-item .label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
-    .modal-info-item .value { font-size: 15px; font-weight: 600; }
-    .modal-btn {
-      display: block; margin: 0 24px 24px; padding: 14px; background: var(--accent);
-      color: #fff; text-align: center; border-radius: 12px; text-decoration: none;
-      font-size: 16px; font-weight: 600; transition: background 0.2s;
-    }
-    .modal-btn:hover { background: #0077ed; }
-    .footer {
-      text-align: center; padding: 40px 24px; color: var(--text-secondary);
-      font-size: 13px; border-top: 1px solid var(--border);
-    }
-    .footer-email { font-size: 12px; margin-top: 6px; opacity: 0.6; }
-    .empty { grid-column: 1 / -1; text-align: center; padding: 80px 24px; color: var(--text-secondary); }
-    .empty h3 { font-size: 20px; margin-bottom: 8px; color: var(--text); }
-    @media (max-width: 700px) {
-      .hero { padding: 60px 20px 32px; }
-      .grid { grid-template-columns: 1fr; padding: 0 16px 60px; }
-      .filters { padding: 0 16px 32px; }
-      .modal { border-radius: 16px; }
-      .modal-info { grid-template-columns: 1fr; }
-    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--bg:#fafafa;--card:#fff;--text:#1d1d1f;--sub:#86868b;--accent:#0071e3;--border:#e5e5e7;--red:#ff3b30;--orange:#ff9500;--green:#34c759;--radius:16px;--shadow:0 2px 12px rgba(0,0,0,.06)}
+    body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',sans-serif;background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased}
+    .hero{text-align:center;padding:80px 24px 40px}
+    .hero h1{font-size:clamp(36px,6vw,56px);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
+    .subtitle{font-size:18px;color:var(--sub);font-weight:400}
+    .update-date{font-size:13px;color:var(--sub);margin-top:8px;opacity:.7}
+    .filters{display:flex;justify-content:center;gap:8px;padding:0 24px 40px;flex-wrap:wrap}
+    .filter-btn{padding:8px 20px;border:1px solid var(--border);border-radius:980px;background:var(--card);font-size:14px;color:var(--text);cursor:pointer;transition:all .2s;font-family:inherit}
+    .filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .filter-btn.active{background:var(--text);color:#fff;border-color:var(--text)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px;max-width:1200px;margin:0 auto;padding:0 24px 80px}
+    .card{background:var(--card);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:transform .25s,box-shadow .25s}
+    .card:hover{transform:translateY(-4px);box-shadow:0 8px 30px rgba(0,0,0,.1)}
+    .card-urgency{height:4px;width:100%}
+    .card-urgency.urgent{background:var(--red)}
+    .card-urgency.soon{background:var(--orange)}
+    .card-urgency.ok{background:var(--green)}
+    .card-body{padding:20px}
+    .card-tags{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+    .card-tag{font-size:11px;padding:3px 10px;border-radius:980px;background:#f0f0f0;color:var(--sub);font-weight:500}
+    .card-tag.hot{background:#fff0f0;color:var(--red)}
+    .card-name{font-size:18px;font-weight:600;margin-bottom:12px;line-height:1.3}
+    .card-meta{display:flex;flex-direction:column;gap:6px;font-size:14px;color:var(--sub)}
+    .card-meta span{display:flex;align-items:center;gap:6px}
+    .card-prize{color:var(--text);font-weight:600;font-size:16px}
+    .card-deadline.urgent{color:var(--red);font-weight:700}
+    .card-deadline.soon{color:var(--orange);font-weight:600}
+    .card-deadline.ok{color:var(--green)}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:100;justify-content:center;align-items:center;padding:24px}
+    .modal-overlay.active{display:flex}
+    .modal{background:var(--card);border-radius:20px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+    .modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border:none;background:rgba(0,0,0,.06);border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--sub);z-index:10}
+    .modal-top{padding:24px 24px 0}
+    .modal-name{font-size:24px;font-weight:700;margin-bottom:8px}
+    .modal-desc{color:var(--sub);font-size:15px;line-height:1.6;margin-bottom:20px}
+    .modal-info{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:0 24px 24px}
+    .modal-info-item{display:flex;flex-direction:column;gap:2px}
+    .modal-info-item .label{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.05em}
+    .modal-info-item .value{font-size:15px;font-weight:600}
+    .modal-btn{display:block;margin:0 24px 24px;padding:14px;background:var(--accent);color:#fff;text-align:center;border-radius:12px;text-decoration:none;font-size:16px;font-weight:600;transition:background .2s}
+    .modal-btn:hover{background:#0077ed}
+    .footer{text-align:center;padding:40px 24px;color:var(--sub);font-size:13px;border-top:1px solid var(--border)}
+    .footer-email{font-size:12px;margin-top:6px;opacity:.6}
+    .empty{grid-column:1/-1;text-align:center;padding:80px 24px;color:var(--sub)}
+    .empty h3{font-size:20px;margin-bottom:8px;color:var(--text)}
+    .count{text-align:center;font-size:14px;color:var(--sub);margin-bottom:24px}
+    @media(max-width:700px){.hero{padding:60px 20px 32px}.grid{grid-template-columns:1fr;padding:0 16px 60px}.filters{padding:0 16px 32px}.modal{border-radius:16px}.modal-info{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <header class="hero">
     <h1>AI 赛事掘金</h1>
-    <p class="subtitle">每日更新 · 发现值得参加的 AI 比赛</p>
+    <p class="subtitle">发现值得参加的 AI 比赛 · 每日自动更新</p>
     <p class="update-date" id="updateDate"></p>
   </header>
   <nav class="filters">
@@ -108,14 +68,17 @@
     <button class="filter-btn" data-filter="ai-dev">💻 AI 开发</button>
     <button class="filter-btn" data-filter="ai-agent">🤖 AI Agent</button>
     <button class="filter-btn" data-filter="ai-game">🎮 AI 游戏</button>
+    <button class="filter-btn" data-filter="web3">⛓️ Web3</button>
   </nav>
+  <p class="count" id="contestCount"></p>
   <main class="grid" id="contestGrid"></main>
   <div class="modal-overlay" id="modal">
     <div class="modal">
       <button class="modal-close" id="modalClose">&times;</button>
-      <img class="modal-poster" id="modalPoster" src="" alt="">
-      <h2 class="modal-title" id="modalTitle"></h2>
-      <p class="modal-desc" id="modalDesc"></p>
+      <div class="modal-top">
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-desc" id="modalDesc"></p>
+      </div>
       <div class="modal-info">
         <div class="modal-info-item"><span class="label">奖金</span><span class="value" id="modalPrize"></span></div>
         <div class="modal-info-item"><span class="label">截止日期</span><span class="value" id="modalDeadline"></span></div>
@@ -126,126 +89,82 @@
     </div>
   </div>
   <footer class="footer">
-    <p>© 2026 AI 赛事掘金 · 每日自动更新</p>
+    <p>© 2026 AI 赛事掘金 · 数据来自公开信息，仅供参考</p>
     <p class="footer-email">联系我们：2319582090z@gmail.com · ZX2319582090@163.com · 2319582090@qq.com</p>
   </footer>
   <script>
-    const DATA = {
-      "lastUpdated": "2026-05-27",
-      "contests": [
-        {
-          "id": 1, "name": "Berkeley AI Hackathon 2026",
-          "prize": "$100,000", "prizeCNY": "约 ¥720,000",
-          "deadline": "2026-06-20", "format": "线下",
-          "location": "UC Berkeley, 美国", "teamSize": "个人/团队",
-          "category": ["high-prize", "ai-dev"],
-          "tags": ["高奖金", "AI开发"],
-          "url": "https://ai.hackberkeley.org/",
-          "description": "24小时AI黑客松，$100K奖金池，300+项目，1300+参赛者。探索LLM和开源API的潜力。"
-        },
-        {
-          "id": 2, "name": "Agentic AI Hackathon - Microsoft",
-          "prize": "$55,000", "prizeCNY": "约 ¥396,000",
-          "deadline": "2026-06-12", "format": "线上",
-          "location": "全球", "teamSize": "个人/团队",
-          "category": ["high-prize", "ai-agent"],
-          "tags": ["高奖金", "AI Agent"],
-          "url": "https://ai-agentic-hackathon.devpost.com/",
-          "description": "微软官方AI Agent黑客松，使用GitHub Copilot、M365 Agents Toolkit构建智能代理。"
-        },
-        {
-          "id": 3, "name": "Gemini 3 Hackathon - Google DeepMind",
-          "prize": "$100,000", "prizeCNY": "约 ¥720,000",
-          "deadline": "2026-07-15", "format": "线上",
-          "location": "全球", "teamSize": "个人/团队",
-          "category": ["high-prize", "ai-dev"],
-          "tags": ["高奖金", "AI开发"],
-          "url": "https://gemini3.devpost.com/",
-          "description": "Google DeepMind举办的Gemini 3黑客松，$100K奖金+AI Futures Fund面试机会。"
-        },
-        {
-          "id": 4, "name": "Sora AI 短片创作大赛",
-          "prize": "¥500,000", "prizeCNY": "¥500,000",
-          "deadline": "2026-07-31", "format": "线上",
-          "location": "中国", "teamSize": "个人",
-          "category": ["ai-video"],
-          "tags": ["AI视频"],
-          "url": "https://openai.com/sora",
-          "description": "使用Sora生成AI短片，主题不限，评审标准：创意、叙事、视觉质量。"
-        },
-        {
-          "id": 5, "name": "Kaggle AI Code Contest",
-          "prize": "$50,000", "prizeCNY": "约 ¥360,000",
-          "deadline": "2026-08-01", "format": "线上",
-          "location": "全球", "teamSize": "个人/团队(≤5人)",
-          "category": ["high-prize", "ai-dev"],
-          "tags": ["高奖金", "AI开发"],
-          "url": "https://www.kaggle.com/competitions",
-          "description": "Kaggle官方AI编程挑战赛，解决实际问题，赢取现金奖金。"
-        },
-        {
-          "id": 6, "name": "AI 游戏开发马拉松",
-          "prize": "¥200,000", "prizeCNY": "¥200,000",
-          "deadline": "2026-06-30", "format": "线上",
-          "location": "中国", "teamSize": "个人/团队",
-          "category": ["ai-game"],
-          "tags": ["AI游戏"],
-          "url": "https://itch.io/jams",
-          "description": "48小时AI游戏开发挑战，使用AI工具辅助创作完整游戏Demo。"
-        }
-      ]
-    };
+    const DATA=[
+      {name:"DevNetwork AI+ML Hackathon 2026",prize:"$20,000+",prizeCNY:"约 ¥144,000",deadline:"2026-05-28",format:"线下",location:"美国",team:"个人/团队",cat:["high-prize","ai-dev"],tags:["高奖金","AI开发"],url:"https://aidevsummit.co/hackathon/",desc:"DevNetwork官方AI+ML黑客松，美国最大开发者社区之一主办，$20K+奖金池。"},
+      {name:"即梦 AI 动画国际峰会作品征集",prize:"€40,000",prizeCNY:"约 ¥310,000",deadline:"2026-05-30",format:"线上",location:"全球",team:"个人",cat:["high-prize","ai-video"],tags:["高奖金","AI视频"],url:"https://www.aibetas.com/aigc_events",desc:"即梦AI动画国际峰会，征集AI动画作品，€40,000奖金，面向全球创作者。"},
+      {name:"2026年江汉AI智能体创新大赛",prize:"¥100,000",prizeCNY:"¥100,000",deadline:"2026-05-31",format:"线上",location:"中国",team:"个人/团队",cat:["high-prize","ai-agent"],tags:["高奖金","AI Agent"],url:"https://www.aibetas.com/aigc_events",desc:"江汉区官方AI智能体创新大赛，最高单项奖金¥100,000，聚焦AI Agent应用。"},
+      {name:"小鹏 AI 公开赛",prize:"¥30,000",prizeCNY:"¥30,000",deadline:"2026-05-31",format:"线上",location:"中国",team:"个人/团队",cat:["ai-dev"],tags:["AI开发"],url:"https://www.aibetas.com/aigc_events",desc:"小鹏汽车官方AI公开赛，一等奖¥30,000，探索AI在汽车领域的创新应用。"},
+      {name:"Agent Academy Hackathon (Microsoft)",prize:"Microsoft周边+认可",prizeCNY:"非现金奖",deadline:"2026-06-02",format:"线上",location:"全球",team:"个人/团队",cat:["ai-agent"],tags:["AI Agent"],url:"https://agentdeadlines.com/",desc:"微软Agent Academy黑客松，使用M365 Agents Toolkit构建企业级AI Agent。"},
+      {name:"Google Cloud Rapid Agent Hackathon",prize:"$60,000现金+$37,500云额度",prizeCNY:"约 ¥432,000+",deadline:"2026-06-11",format:"线上",location:"全球",team:"个人/团队",cat:["high-prize","ai-agent"],tags:["高奖金","AI Agent"],url:"https://internshala.com/competitions/google-cloud-rapid-agent-hackathon/",desc:"Google Cloud官方AI Agent黑客松，$60K现金+$37.5K云额度，构建真实世界Agent。"},
+      {name:"途虎养车×商汤Seko AI养车创作季",prize:"¥15,000",prizeCNY:"¥15,000",deadline:"2026-06-11",format:"线上",location:"中国",team:"个人",cat:["ai-video"],tags:["AI视频"],url:"https://www.aibetas.com/aigc_events",desc:"途虎养车联合商汤Seko举办的AI视频创作赛，主题为AI养车场景。"},
+      {name:"TapTV Arena AI动画黑客松 · 杭州站",prize:"¥600,000",prizeCNY:"¥600,000",deadline:"2026-06-12",format:"线下",location:"杭州",team:"个人/团队",cat:["high-prize","ai-video"],tags:["高奖金","AI视频"],url:"https://www.aitop100.cn/infomation/details/33855.html",desc:"TapTV Arena AI动画黑客松杭州站，¥600,000现金奖金，线下48小时极限创作。"},
+      {name:"ETHGlobal New York 2026",prize:"$500,000+",prizeCNY:"约 ¥3,600,000+",deadline:"2026-06-14",format:"线下",location:"纽约",team:"个人/团队",cat:["high-prize","web3"],tags:["高奖金","Web3"],url:"https://ethglobal.com/",desc:"ETHGlobal纽约站，$500K+赞助商奖金，全球最大Web3黑客松之一。"},
+      {name:"Microsoft Agents League Hackathon",prize:"$55,000",prizeCNY:"约 ¥396,000",deadline:"2026-06-14",format:"线上",location:"全球",team:"个人/团队",cat:["high-prize","ai-agent"],tags:["高奖金","AI Agent"],url:"https://agentdeadlines.com/",desc:"微软Agents League黑客松，$55K奖金，使用GitHub Copilot和M365 Toolkit构建Agent。"},
+      {name:"智联招聘首届AI创新大赛",prize:"¥500,000+",prizeCNY:"¥500,000+",deadline:"2026-06-14",format:"线上",location:"中国",team:"个人/团队",cat:["high-prize","ai-dev"],tags:["高奖金","AI开发"],url:"https://www.aibetas.com/aigc_events",desc:"智联招聘首届AI创新大赛，总奖池¥50万+，单项最高¥15万，AI+招聘场景创新。"},
+      {name:"Mantle Turing Test Hackathon 2026",prize:"$223,000+",prizeCNY:"约 ¥1,600,000+",deadline:"2026-06-15",format:"线上",location:"全球",team:"个人/团队",cat:["high-prize","web3","ai-agent"],tags:["高奖金","Web3","AI Agent"],url:"https://devhub.mantle.xyz/",desc:"Mantle Turing Test黑客松，$223K+奖金（含$100K现金及Web3激励），AI+区块链。"},
+      {name:"Agents Without Masters — NEAR AI × DoraHacks",prize:"$25,000",prizeCNY:"约 ¥180,000",deadline:"2026-06-16",format:"线上",location:"全球",team:"个人/团队",cat:["ai-agent","web3"],tags:["AI Agent","Web3"],url:"https://dorahacks.io/",desc:"NEAR AI联合DoraHacks举办，$25K奖金，构建自主运行的AI Agent。"},
+      {name:"AI Agents Hackathon 2026 (Databricks)",prize:"$10,000/$5,000/$2,500",prizeCNY:"约 ¥72,000/¥36,000/¥18,000",deadline:"2026-06-18",format:"线上",location:"全球",team:"个人/团队",cat:["ai-agent","ai-dev"],tags:["AI Agent","AI开发"],url:"https://agentdeadlines.com/",desc:"Databricks官方AI Agents黑客松，使用Databricks平台构建智能Agent。"},
+      {name:"UC Berkeley AI Hackathon 2026",prize:"$100,000",prizeCNY:"约 ¥720,000",deadline:"2026-06-20",format:"线下",location:"UC Berkeley, 美国",team:"个人/团队",cat:["high-prize","ai-dev"],tags:["高奖金","AI开发"],url:"https://aihackathon.berkeley.edu/",desc:"UC Berkeley 24小时AI黑客松，$100K奖金池，300+项目，1300+参赛者，探索LLM和开源API。"},
+      {name:"盐言故事×Vidu：AI漫剧黑客松",prize:"¥20,000+Vidu积分",prizeCNY:"¥20,000+",deadline:"2026-06-20",format:"线上",location:"中国",team:"个人",cat:["ai-video"],tags:["AI视频"],url:"https://www.aibetas.com/aigc_events",desc:"盐言故事联合Vidu举办AI漫剧黑客松，单人最高¥20,000+Vidu积分，AI漫画+短剧创作。"},
+      {name:"USAII Global AI Hackathon 2026",prize:"$15,000+",prizeCNY:"约 ¥108,000+",deadline:"2026-06-21",format:"线上",location:"全球",team:"个人/团队",cat:["high-prize","ai-dev"],tags:["高奖金","AI开发"],url:"https://aihackathon.usaii.org/",desc:"USAII全球AI黑客松，$15K+奖金含AI认证奖学金，面向全球AI开发者。"}
+    ];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const grid = document.getElementById('contestGrid');
-      const modal = document.getElementById('modal');
-      document.getElementById('updateDate').textContent = '更新于 ' + DATA.lastUpdated;
+    document.addEventListener('DOMContentLoaded',()=>{
+      const grid=document.getElementById('contestGrid');
+      const modal=document.getElementById('modal');
+      const today=new Date();
+      document.getElementById('updateDate').textContent='更新于 '+today.toISOString().slice(0,10);
 
-      function render(filter) {
-        const filtered = filter === 'all' ? DATA.contests : DATA.contests.filter(c => c.category.includes(filter));
-        if (!filtered.length) { grid.innerHTML = '<div class="empty"><h3>暂无赛事</h3><p>该分类下暂无比赛信息</p></div>'; return; }
-        grid.innerHTML = filtered.map(c => {
-          const daysLeft = Math.ceil((new Date(c.deadline) - new Date()) / 86400000);
-          let dc = 'safe';
-          if (daysLeft <= 7) dc = 'soon'; else if (daysLeft <= 21) dc = 'normal';
-          const dl = daysLeft <= 0 ? '已截止' : daysLeft <= 1 ? '明天截止！' : daysLeft + ' 天后截止';
-          const tags = c.tags.map(t => '<span class="card-tag ' + (t === '高奖金' ? 'hot' : '') + '">' + t + '</span>').join('');
-          return '<div class="card" data-id="' + c.id + '">' +
-            '<div class="card-poster"></div>' +
-            '<div class="card-body"><div class="card-tags">' + tags + '</div>' +
-            '<h3 class="card-name">' + c.name + '</h3>' +
-            '<div class="card-meta">' +
-            '<span class="card-prize">💰 ' + c.prize + '（' + c.prizeCNY + '）</span>' +
-            '<span class="card-deadline ' + dc + '">📅 ' + c.deadline + ' · ' + dl + '</span>' +
-            '<span>📍 ' + c.format + ' · ' + c.location + '</span>' +
-            '<span>👥 ' + c.teamSize + '</span></div></div></div>';
+      function daysLeft(d){return Math.ceil((new Date(d)-today)/86400000)}
+
+      function render(filter){
+        const filtered=filter==='all'?DATA:DATA.filter(c=>c.cat.includes(filter));
+        document.getElementById('contestCount').textContent=filtered.length+' 场赛事';
+        if(!filtered.length){grid.innerHTML='<div class="empty"><h3>暂无赛事</h3><p>该分类下暂无比赛</p></div>';return}
+        grid.innerHTML=filtered.map((c,i)=>{
+          const dl=daysLeft(c.deadline);
+          let uc='ok',dc='ok';
+          if(dl<=3){uc='urgent';dc='urgent'}else if(dl<=7){uc='urgent';dc='urgent'}else if(dl<=14){uc='soon';dc='soon'}
+          const dlText=dl<=0?'已截止':dl===1?'明天截止！':dl+' 天后截止';
+          const tags=c.tags.map(t=>'<span class="card-tag '+(t==='高奖金'?'hot':'')+'">'+t+'</span>').join('');
+          return '<div class="card" data-idx="'+i+'">'+
+            '<div class="card-urgency '+uc+'"></div>'+
+            '<div class="card-body"><div class="card-tags">'+tags+'</div>'+
+            '<h3 class="card-name">'+c.name+'</h3>'+
+            '<div class="card-meta">'+
+            '<span class="card-prize">💰 '+c.prize+'</span>'+
+            '<span class="card-deadline '+dc+'">📅 '+c.deadline+' · '+dlText+'</span>'+
+            '<span>📍 '+c.format+' · '+c.location+'</span>'+
+            '</div></div></div>';
         }).join('');
-        grid.querySelectorAll('.card').forEach(card => {
-          card.addEventListener('click', () => {
-            const c = DATA.contests.find(x => x.id == card.dataset.id);
-            document.getElementById('modalPoster').src = '';
-            document.getElementById('modalPoster').alt = c.name;
-            document.getElementById('modalTitle').textContent = c.name;
-            document.getElementById('modalDesc').textContent = c.description;
-            document.getElementById('modalPrize').textContent = c.prize + '（' + c.prizeCNY + '）';
-            document.getElementById('modalDeadline').textContent = c.deadline;
-            document.getElementById('modalFormat').textContent = c.format + ' · ' + c.location;
-            document.getElementById('modalTeam').textContent = c.teamSize;
-            document.getElementById('modalLink').href = c.url;
+        grid.querySelectorAll('.card').forEach(card=>{
+          card.addEventListener('click',()=>{
+            const c=DATA[card.dataset.idx];
+            document.getElementById('modalName').textContent=c.name;
+            document.getElementById('modalDesc').textContent=c.desc;
+            document.getElementById('modalPrize').textContent=c.prize+'（'+c.prizeCNY+'）';
+            document.getElementById('modalDeadline').textContent=c.deadline;
+            document.getElementById('modalFormat').textContent=c.format+' · '+c.location;
+            document.getElementById('modalTeam').textContent=c.team;
+            document.getElementById('modalLink').href=c.url;
             modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow='hidden';
           });
         });
       }
 
-      document.getElementById('modalClose').addEventListener('click', closeModal);
-      modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-      document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-      function closeModal() { modal.classList.remove('active'); document.body.style.overflow = ''; }
+      document.getElementById('modalClose').addEventListener('click',closeModal);
+      modal.addEventListener('click',e=>{if(e.target===modal)closeModal()});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+      function closeModal(){modal.classList.remove('active');document.body.style.overflow=''}
 
-      document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.filter-btn').forEach(btn=>{
+        btn.addEventListener('click',()=>{
+          document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
           btn.classList.add('active');
           render(btn.dataset.filter);
         });
